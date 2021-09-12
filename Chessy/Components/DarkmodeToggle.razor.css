@@ -1,0 +1,35 @@
+﻿.darkmode-toggle {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    outline: none !important;
+    border: none !important;
+    background: transparent;
+    overflow: hidden;
+    padding: 5px;
+    left: 22px;
+    top: 22px;
+}
+
+    .darkmode-toggle svg {
+        display: block;
+        fill: var(--text);
+        -webkit-transition: .3s ease-in-out;
+        -o-transition: .3s ease-in-out;
+        transition: .3s ease-in-out;
+        cursor: pointer;
+    }
+
+body[data-theme=false] .darkmode-toggle svg {
+    -webkit-transform: translateY(-100%);
+    -ms-transform: translateY(-100%);
+    transform: translateY(-100%);
+}
+
+body[data-theme=false] .sun-icon {
+    visibility: hidden;
+}
+
+body[data-theme=false] .moon-icon {
+    visibility: visible;
+}

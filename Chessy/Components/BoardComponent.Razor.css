@@ -1,0 +1,191 @@
+﻿
+
+.board-container {
+    width: 100%;
+    height: 100%;
+    max-width: 90vmin;
+}
+
+.board {
+    margin: 1vmin 3vmin;
+    padding: 1vmin;
+    padding-bottom: 1vmin;
+    border-radius: 1vmin;
+    background: var(--card-background);
+    box-shadow: rgba(0, 0, 0, 0.4) 0px .3vmin .6vmin, rgba(0, 0, 0, 0.3) 0px 1vmin 1.95vmin -0.45vmin, rgba(0, 0, 0, 0.2) 0px -1vmin 0px inset;
+}
+.board .letters {
+    display: flex;
+    justify-content: space-around;
+    margin: 0 3vmin;
+}
+    .board .letters div {
+        color: var(--text-muted);
+        font-size: 2vmin;
+        height: 3vmin;
+        font-family: Roboto;
+        font-weight: bold;
+    }
+    .board .row-number {
+        color: var(--text-muted);
+        font-size: 2vmin;
+        width: 3vmin;
+        font-family: Roboto;
+        font-weight: bold;
+        text-align: center;
+    }
+
+.board-grid {
+    border-radius: 1vmin;
+    width: 66vmin;
+    height: 60vmin;
+    background: var(--card-background2);
+}
+
+.board-row {
+    height: auto;
+    display: flex;
+    align-items:center;
+}
+
+.board-cell {
+    width: 7.5vmin !important;
+    height: 7.5vmin !important;
+    color: var(--text);
+    text-align: center;
+    font-size: 5vmin;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+}
+
+.now-playing {
+    color: var(--text2);
+    font-size: 2vmin;
+    font-family: Roboto;
+    width: 60vmin;
+    display: flex;
+    margin: 0 6vmin;
+    height: 4vmin;
+    justify-content: space-between;
+}
+    .now-playing div img {
+        margin: 0 0.3vmin;
+        box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
+    }
+.now-playing strong {
+    color: var(--text);
+}
+.now-playing span {
+    background: var(--cell-background2);
+    border-radius: .5vmin;
+    margin: 0 0.5vmin;
+    margin-top: 1vmin;
+    padding: 0.5vmin 1.2vmin;
+    text-align: center;
+    color: var(--text);
+}
+
+.dark {
+    background: var(--cell-background);
+}
+
+.light {
+    background: var(--cell-background2);
+}
+
+.board-cell img {
+    height: 80%;
+    padding-bottom: 10%;
+    cursor: grab;
+    z-index: 1;
+}
+
+.promotion-container {
+    position: absolute;
+    height: auto;
+    width: auto;
+    padding: 2vmin;
+    background: var(--card-background);
+    border-radius: 1vmin;
+    z-index: 10;
+    overflow: hidden;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px .3vmin .6vmin, rgba(0, 0, 0, 0.1) 0px 1vmin 1.95vmin -0.45vmin, rgba(0, 0, 0, 0.2) 0px -.4vmin 0px inset;
+}
+
+    .promotion-container .choices {
+        display: flex;
+        justify-content: space-around;
+    }
+
+        .promotion-container .choices img {
+            height: 8vmin;
+            width: 8vmin;
+            margin: 0 1vmin;
+            background: var(--cell-background2);
+            object-fit: contain;
+            padding: 1vmin;
+            transition: transform ease .1s, box-shadow .1s ease;
+            cursor: pointer;
+        }
+
+            .promotion-container .choices img:hover {
+                transform: scale(1.1);
+                box-shadow: rgba(0, 0, 0, 0.15) 0px 2.25vmin 3.75vmin, rgba(0, 0, 0, 0.05) 0px 0.7vmin 1.5vmin;
+            }
+
+.White_Pawn, .Black_Pawn {
+    height: 65% !important;
+}
+
+.White_Knight, .White_Rook, .White_Bishop,
+.Black_Knight, .Black_Rook, .Black_Bishop {
+    height: 70% !important;
+}
+.Black_Queen, .Black_King,
+.White_Queen, .White_King {
+    height: 80% !important;
+}
+
+.empty {
+    cursor: unset !important;
+}
+
+.dark.last-move {
+    background: var(--cell-last-move-dark);
+}
+
+.light.last-move {
+    background: var(--cell-last-move-light);
+}
+.selected {
+    background: var(--cell-selected);
+}
+.possible{
+    cursor: pointer;
+}
+    .possible::after {
+        content: " ";
+        height: 6vmin;
+        width: 6vmin;
+        background: transparent;
+        border-radius: 5vmin;
+        position: absolute;
+        opacity: 0.2;
+        margin-bottom: 3.75vmin;
+        transform: translateY(50%);
+        box-sizing: border-box;
+        border: .6vmin solid var(--cell-background2);
+        transition: border .1s ease;
+    }
+    .possible:hover::after {
+        border: 1.5vmin solid var(--cell-background2);
+    }
+
+.dark.possible {
+    background: var(--cell-possible-dark);
+}
+
+.light.possible {
+    background: var(--cell-possible-light);
+}

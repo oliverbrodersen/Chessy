@@ -1,0 +1,87 @@
+﻿@using Chessy.Models
+@using Chessy.Models.Board
+@using Chessy.Data
+@inject BoardService boardService
+
+<div>
+    @if (Board.Promotion && PlayingColor == Board.NowPlaying)
+    {
+        <div class="promotion-container">
+            <div class="choices">
+                <img src=@($"/img/chess set/{Board.NowPlaying}_bishop.png") @onclick=@(()=>PromotePiece(new (PieceType.Bishop, Board.NowPlaying))) />
+                <img src=@($"/img/chess set/{Board.NowPlaying}_knight.png") @onclick=@(()=>PromotePiece(new (PieceType.Knight, Board.NowPlaying))) />
+                <img src=@($"/img/chess set/{Board.NowPlaying}_rook.png")   @onclick=@(()=>PromotePiece(new (PieceType.Rook,   Board.NowPlaying))) />
+                <img src=@($"/img/chess set/{Board.NowPlaying}_queen.png")  @onclick=@(()=>PromotePiece(new (PieceType.Queen,  Board.NowPlaying))) />
+            </div>
+        </div>
+    }
+
+    <div class="now-playing">
+        <div style="margin-top: 1vmin;"> 
+            <span>@Board.Points(OpponentColor())</span> <strong>@OpponentColor()</strong> @(Board.NowPlaying == OpponentColor() ? "(Now playing)" : string.Empty)
+        </div>
+        <div>
+            @foreach(Piece p in @Board.Captured)
+            {
+                @if (p.Color == PlayingColor)
+                {
+                    <img class="@p.Icon()" src="/img/chess set/@(p.Icon()).png">
+                }
+            }
+        </div>
+    </div>
+    <div class="board">
+        <div class="letters">
+            @for(int i = 0; i < letters.Count(); i++)
+            {
+                int n = PlayingColor == Color.White ? i : letters.Count() - 1 - i;
+                <div>@letters[n]</div>
+            }
+        </div>
+        <div class="board-grid">
+            @for (var i = Board.Size-1; i >= 0; i--)
+            {
+                int row = PlayingColor == Color.White ? i : Board.Size - 1 - i;
+                <div class="board-row" OnStatusUpdated="HandleStatusUpdated">
+                    <div class="row-number">
+                        @(row+1)
+                    </div>
+                    @for (var j = 0; j < @Board.Size; j++)
+                    {
+                        int col = PlayingColor == Color.White ? j : Board.Size - 1 - j;
+                        int copy_i = row, copy_j = col;
+
+                        <div class="board-cell @((row+col) % 2 == 0 ? "dark" : "light") @(Board.Grid[row,col].Selected ? "selected" : (Board.Grid[row,col].LastMove ? "last-move" : string.Empty)) @(Board.Grid[row,col].Possible?"possible":string.Empty)" 
+                        @onclick=@(()=>ClickCell(copy_i,copy_j))>
+                            <img draggable="true" class="@Board.Grid[row,col].Icon()" src="/img/chess set/@(Board.Grid[row,col].Icon()).png">
+                        </div>
+                    }
+                    <div class="row-number">
+                        @(row+1)
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="letters">
+            @for(int i = 0; i < letters.Count(); i++)
+            {
+                int n = PlayingColor == Color.White ? i : letters.Count() - 1 - i;
+                <div>@letters[n]</div>
+            }
+        </div>
+    </div>
+    <div class="now-playing">
+        <div style="margin-top: 1vmin;"> 
+            <span>@Board.Points(PlayingColor)</span> <strong>@PlayingColor</strong> @(Board.NowPlaying == PlayingColor ? "(Now playing)" : string.Empty)
+        </div>
+        <div>
+            @foreach(Piece p in @Board.Captured)
+            {
+                @if (p.Color == OpponentColor())
+                {
+                    <img class="@p.Icon()" src="/img/chess set/@(p.Icon()).png">
+                }
+            }
+        </div>
+    </div>
+</div>

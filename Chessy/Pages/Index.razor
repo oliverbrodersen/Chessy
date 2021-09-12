@@ -1,0 +1,94 @@
+﻿@page "/"
+@page "/invite/{key?}"
+@using Chessy.Components
+@using Chessy.Data
+@using Chessy.Models
+@using Chessy.Models.Board
+@inject MultiplayerService multiplayerService
+@inject NavigationManager Navigator
+@inject IJSRuntime JSRuntime
+
+
+<div class="board-container center" style="height: 100%;">
+    <BoardComponent Board=@board PlayingColor=@MyColor/>
+    @if (string.IsNullOrEmpty(key) && !board.Started && !board.SecondPlayerConnected)
+    {
+        <div class="menu">
+            <div class="label">
+                My color
+            </div>
+            <div class="choices">
+                <img src=@($"/img/chess set/{Color.White}_pawn.png") class="@(@MyColor == Color.White ? "selected" : string.Empty)" @onclick=@(() => SetColor(Color.White))/>
+                <img src=@($"/img/chess set/{Color.Black}_pawn.png") class="@(@MyColor == Color.Black ? "selected" : string.Empty)" @onclick=@(() => SetColor(Color.Black))/>
+            </div>
+            <button @onclick=@HostGame>
+                Create
+            </button>
+            @if (!string.IsNullOrEmpty(hostKey))
+            {
+                <div class="code">
+                    <strong>
+                        Code 
+                    </strong>
+                    <button @onclick=@CopyUrl>
+                        @hostKey
+                    </button>
+                </div>
+                <div class="subtext">
+                    Click to copy url
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code{
+    [Parameter]
+    public string? key { get; set; }
+    public Color MyColor { get; set; }
+    private Board board;
+    private string hostKey { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(key) || !multiplayerService.Games.ContainsKey(key))
+        {
+            key = string.Empty;
+            board = new Board(8);
+            board.ResetBoard();
+            MyColor = Color.White;
+        }
+        else
+        {
+            board = multiplayerService.GetBoard(key);
+            MyColor = board.SecondPlayerColor;
+        }
+        
+        board.Notify += OnNotify;
+    }
+
+    public void HostGame()
+    {
+        hostKey = multiplayerService.GetKey();
+        board.SecondPlayerColor = MyColor == Color.White ? Color.Black : Color.White;
+        multiplayerService.StartBoard(hostKey, board);
+    }
+
+    public async Task CopyUrl()
+    {
+        await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", Navigator.BaseUri + "invite/" + hostKey);
+    }
+
+    private void SetColor(Color color)
+    {
+        MyColor = color;
+    }
+
+    public async Task OnNotify(Board board)
+    {
+        await InvokeAsync(() =>
+        {
+            StateHasChanged();
+        });
+    }
+}
