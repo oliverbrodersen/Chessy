@@ -8,10 +8,10 @@
     {
         <div class="promotion-container">
             <div class="choices">
-                <img src=@($"/img/chess set/{Board.NowPlaying}_bishop.png") @onclick=@(()=>PromotePiece(new (PieceType.Bishop, Board.NowPlaying))) />
-                <img src=@($"/img/chess set/{Board.NowPlaying}_knight.png") @onclick=@(()=>PromotePiece(new (PieceType.Knight, Board.NowPlaying))) />
-                <img src=@($"/img/chess set/{Board.NowPlaying}_rook.png")   @onclick=@(()=>PromotePiece(new (PieceType.Rook,   Board.NowPlaying))) />
-                <img src=@($"/img/chess set/{Board.NowPlaying}_queen.png")  @onclick=@(()=>PromotePiece(new (PieceType.Queen,  Board.NowPlaying))) />
+                <img src=@($"/img/chess set/{Board.NowPlaying}_bishop.png") @*@onclick=@(()=>PromotePiece(new (PieceType.Bishop, Board.NowPlaying)))*@ />
+                <img src=@($"/img/chess set/{Board.NowPlaying}_knight.png") @*@onclick=@(()=>PromotePiece(new (PieceType.Knight, Board.NowPlaying)))*@ />
+                <img src=@($"/img/chess set/{Board.NowPlaying}_rook.png")   @*@onclick=@(()=>PromotePiece(new (PieceType.Rook,   Board.NowPlaying)))*@ />
+                <img src=@($"/img/chess set/{Board.NowPlaying}_queen.png")  @*@onclick=@(()=>PromotePiece(new (PieceType.Queen,  Board.NowPlaying)))*@ />
             </div>
         </div>
     }
@@ -39,21 +39,21 @@
             }
         </div>
         <div class="board-grid">
-            @for (var i = Board.Size-1; i >= 0; i--)
+            @for (var i = 7; i >= 0; i--)
             {
-                int row = PlayingColor == Color.White ? i : Board.Size - 1 - i;
+                int row = PlayingColor == Color.White ? i : 7 - i;
                 <div class="board-row" OnStatusUpdated="HandleStatusUpdated">
                     <div class="row-number">
                         @(row+1)
                     </div>
-                    @for (var j = 0; j < @Board.Size; j++)
+                    @for (var j = 0; j < 8; j++)
                     {
-                        int col = PlayingColor == Color.White ? j : Board.Size - 1 - j;
+                        int col = PlayingColor == Color.White ? j : 7 - j;
                         int copy_i = row, copy_j = col;
 
-                        <div class="board-cell @((row+col) % 2 == 0 ? "dark" : "light") @(Board.Grid[row,col].Selected ? "selected" : (Board.Grid[row,col].LastMove ? "last-move" : string.Empty)) @(Board.Grid[row,col].Possible?"possible":string.Empty) @(Board.Grid[row,col].Checked ? "checked" : string.Empty)" 
-                        @onclick=@(()=>ClickCell(copy_i,copy_j))>
-                            <img draggable="true" class="@Board.Grid[row,col].Icon()" src="/img/chess set/@(Board.Grid[row,col].Icon()).png">
+                        <div class="board-cell @((row+col) % 2 == 0 ? "dark" : "light") @(Grid[row,col].Selected ? "selected" : (Grid[row,col].LastMove ? "last-move" : string.Empty)) @(Grid[row,col].Possible?"possible":string.Empty) @(Grid[row,col].Checked ? "checked" : string.Empty)" 
+                        @onclick=@(()=>ClickCell(Grid[copy_i,copy_j]))>
+                            <img draggable="true" class="@Icon(Grid[row,col])" src="/img/chess set/@(Icon(Grid[row,col])).png">
                         </div>
                     }
                     <div class="row-number">
