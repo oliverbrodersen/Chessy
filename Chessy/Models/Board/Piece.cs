@@ -38,17 +38,15 @@ public class Piece
         switch (Type)
         {
             case PieceType.Bishop:
-                c = Color == Color.White ? "♗B" : "♝B"; break;
+                c = Color == Color.White ? "B" : "B"; break;
             case PieceType.Rook:
-                c = Color == Color.White ? "♖R" : "♜R"; break;
+                c = Color == Color.White ? "R" : "R"; break;
             case PieceType.Knight:
-                c = Color == Color.White ? "♘N" : "♞N"; break;
+                c = Color == Color.White ? "N" : "N"; break;
             case PieceType.King:
-                c = Color == Color.White ? "♔K" : "♚K"; break;
+                c = Color == Color.White ? "K" : "K"; break;
             case PieceType.Queen:
-                c = Color == Color.White ? "♕Q" : "♛Q"; break;
-            case PieceType.Pawn:
-                c = Color == Color.White ? "♙" : "♟"; break;
+                c = Color == Color.White ? "Q" : "Q"; break;
         }
 
         return c;

@@ -2,10 +2,11 @@
 @import url('file:///Z:\Code\C#\Chessy\Chessy\Chessy\wwwroot\css\site.css');
 body[data-theme=false] {
     --background: #f2f2f2;
-    --card-background: #ffcb7a;
+    --card-background: #e2c599;
     --cell-background2: White;
     --cell-background: #ffe0af;
     --cell-selected: #f3b425;
+    --cell-danger: #ff5d5d;
     --cell-last-move-light: #c9df9e;
     --cell-last-move-dark: #adc284;
     --cell-possible-light: #ffd678;
@@ -21,6 +22,7 @@ body[data-theme='dark'] {
     --cell-background2: #47433D;
     --cell-background: #292724;
     --cell-selected: #EFBB45;
+    --cell-danger: #9e2d2d;
     --cell-last-move-light: #7a8f52;
     --cell-last-move-dark: #465f2f;
     --cell-possible-light: #987b38;
@@ -190,4 +192,8 @@ a, .btn-link {
 .board-container .menu button:active {
     box-shadow: rgba(0,0,0,.3) 0 3px -0.9vmin inset;
     transform: translateY(1px);
+}
+
+.checked {
+    background: var(--cell-danger) !important;
 }

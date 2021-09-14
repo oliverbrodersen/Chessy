@@ -26,7 +26,7 @@ else
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
-
+app.UsePathBase("/Application/Chessy/");
 app.UseRouting();
 
 

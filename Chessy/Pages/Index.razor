@@ -21,10 +21,13 @@
                 <img src=@($"/img/chess set/{Color.White}_pawn.png") class="@(@MyColor == Color.White ? "selected" : string.Empty)" @onclick=@(() => SetColor(Color.White))/>
                 <img src=@($"/img/chess set/{Color.Black}_pawn.png") class="@(@MyColor == Color.Black ? "selected" : string.Empty)" @onclick=@(() => SetColor(Color.Black))/>
             </div>
-            <button @onclick=@HostGame>
-                Create
-            </button>
-            @if (!string.IsNullOrEmpty(hostKey))
+            @if (string.IsNullOrEmpty(hostKey))
+            {
+                <button @onclick=@HostGame>
+                    Create
+                </button>
+            }
+            else
             {
                 <div class="code">
                     <strong>

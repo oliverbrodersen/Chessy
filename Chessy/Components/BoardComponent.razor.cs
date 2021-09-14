@@ -19,6 +19,7 @@ public partial class BoardComponent
     {
         letters = new string[] { "A", "B", "C", "D", "E", "F", "G", "H" };
         Board.Notify += OnNotify;
+        LocalTwoPlayer = true;
     }
 
     public async Task ClickCell(int row, int col, DragEventArgs dragEventArgs = null)

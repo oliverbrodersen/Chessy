@@ -14,6 +14,9 @@ public class MultiplayerService
 
     public Board GetBoard(string key)
     {
+        if (!Games.ContainsKey(key))
+            return null;
+
         if(Games[key] != null && Games[key].SecondPlayerConnected == false)
             Games[key].SecondPlayerConnected = true;
 

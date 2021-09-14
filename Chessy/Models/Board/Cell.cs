@@ -8,7 +8,7 @@ public class Cell
     public bool Selected { get; set; }
     public bool Castles { get; set; }
     public bool LastMove {  get; set; }
-
+    public bool Checked {  get; set; }
 
     public Piece? Piece { get; set; }
 

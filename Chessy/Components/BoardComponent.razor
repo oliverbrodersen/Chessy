@@ -51,7 +51,7 @@
                         int col = PlayingColor == Color.White ? j : Board.Size - 1 - j;
                         int copy_i = row, copy_j = col;
 
-                        <div class="board-cell @((row+col) % 2 == 0 ? "dark" : "light") @(Board.Grid[row,col].Selected ? "selected" : (Board.Grid[row,col].LastMove ? "last-move" : string.Empty)) @(Board.Grid[row,col].Possible?"possible":string.Empty)" 
+                        <div class="board-cell @((row+col) % 2 == 0 ? "dark" : "light") @(Board.Grid[row,col].Selected ? "selected" : (Board.Grid[row,col].LastMove ? "last-move" : string.Empty)) @(Board.Grid[row,col].Possible?"possible":string.Empty) @(Board.Grid[row,col].Checked ? "checked" : string.Empty)" 
                         @onclick=@(()=>ClickCell(copy_i,copy_j))>
                             <img draggable="true" class="@Board.Grid[row,col].Icon()" src="/img/chess set/@(Board.Grid[row,col].Icon()).png">
                         </div>

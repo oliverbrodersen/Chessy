@@ -2,6 +2,8 @@
 namespace Chessy.Models.Board;
 public class Board
 {
+    private object board;
+
     public Guid Id {  get; }
     public int Size { get; set; }
     public Cell[,] Grid { get; set; }
@@ -17,6 +19,8 @@ public class Board
     public bool Started {  get; set; }
 
     public bool SecondPlayerConnected {  get; set; }
+
+    public bool Checked {  get; set; }
 
     public Color SecondPlayerColor {  get; set;}
 
@@ -94,21 +98,21 @@ public class Board
         }
     }
 
-    public void MarkNextLegalMoves(Cell CurrentCell)
+    public async Task MarkNextLegalMoves(Cell CurrentCell)
     {
         if (!CurrentCell.Empty && CurrentCell.Piece.Color == NowPlaying)
         {
             switch (CurrentCell.Piece.Type)
             {
                 case PieceType.Knight:
-                    SetPossible(CurrentCell, 2, 1);
-                    SetPossible(CurrentCell, 2, -1);
-                    SetPossible(CurrentCell, -2, 1);
-                    SetPossible(CurrentCell, -2, -1);
-                    SetPossible(CurrentCell, 1, 2);
-                    SetPossible(CurrentCell, 1, -2);
-                    SetPossible(CurrentCell, -1, 2);
-                    SetPossible(CurrentCell, -1, -2);
+                    await SetPossible(CurrentCell, 2, 1);
+                    await SetPossible(CurrentCell, 2, -1);
+                    await SetPossible(CurrentCell, -2, 1);
+                    await SetPossible(CurrentCell, -2, -1);
+                    await SetPossible(CurrentCell, 1, 2);
+                    await SetPossible(CurrentCell, 1, -2);
+                    await SetPossible(CurrentCell, -1, 2);
+                    await SetPossible(CurrentCell, -1, -2);
                     break;
                 case PieceType.Rook:
                     Ray(CurrentCell, 1, 0);
@@ -133,40 +137,40 @@ public class Board
                     Ray(CurrentCell, 0, -1);
                     break;
                 case PieceType.King:
-                    SetPossible(CurrentCell,  1,  1);
-                    SetPossible(CurrentCell,  -1,  -1);
-                    SetPossible(CurrentCell,  -1,  1);
-                    SetPossible(CurrentCell,  1,  -1);
-                    SetPossible(CurrentCell,  1, 0);
-                    SetPossible(CurrentCell,  -1, 0);
+                    await SetPossible(CurrentCell,  1,  1);
+                    await SetPossible(CurrentCell,  -1,  -1);
+                    await SetPossible(CurrentCell,  -1,  1);
+                    await SetPossible(CurrentCell,  1,  -1);
+                    await SetPossible(CurrentCell,  1, 0);
+                    await SetPossible(CurrentCell,  -1, 0);
                     //Checks sides as well as castles
-                    if(SetPossible(CurrentCell, 0, 1))
+                    if(await SetPossible(CurrentCell, 0, 1))
                     {
                         if (CurrentCell.Piece.FirstMove)
                         {
-                            if(SetPossible(CurrentCell, 0, 2, true))
+                            if(await SetPossible(CurrentCell, 0, 2, true))
                             {
-                                if (SetPossible(CurrentCell, 0, 3, true))
+                                if (await SetPossible(CurrentCell, 0, 3, true))
                                 {
                                     if (Grid[CurrentCell.Row, CurrentCell.Col + 4].Piece.Type == PieceType.Rook &&
                                         Grid[CurrentCell.Row, CurrentCell.Col + 4].Piece.FirstMove)
                                     {
-                                        SetPossible(CurrentCell, 0, 2, false, true);
+                                        await SetPossible(CurrentCell, 0, 2, false, true);
                                     }
                                 }
                             }
                         }
                     }
-                    if (SetPossible(CurrentCell, 0, -1))
+                    if (await SetPossible(CurrentCell, 0, -1))
                     {
                         if (CurrentCell.Piece.FirstMove)
                         {
-                            if (SetPossible(CurrentCell, 0, -2, true))
+                            if (await SetPossible(CurrentCell, 0, -2, true))
                             {
                                 if (Grid[CurrentCell.Row, CurrentCell.Col - 3].Piece.Type == PieceType.Rook &&
                                         Grid[CurrentCell.Row, CurrentCell.Col - 3].Piece.FirstMove)
                                 {
-                                    SetPossible(CurrentCell, 0, -2, false, true);
+                                    await SetPossible(CurrentCell, 0, -2, false, true);
                                 }
                             }
                         }
@@ -179,21 +183,21 @@ public class Board
                         if (Grid[CurrentCell.Row + fact, CurrentCell.Col].Empty)
                         {
                             if (CurrentCell.Piece.FirstMove && Grid[CurrentCell.Row + (2*fact), CurrentCell.Col].Empty)
-                                SetPossible(CurrentCell, 2 * fact, 0);
+                                await SetPossible(CurrentCell, 2 * fact, 0);
 
-                            SetPossible(CurrentCell, fact, 0);
+                            await SetPossible(CurrentCell, fact, 0);
                         }
 
                         //Check for diagonal captures
                         if (CurrentCell.Col - fact < Size && CurrentCell.Col - fact >= 0)
                         {
                             if (!Grid[CurrentCell.Row + fact, CurrentCell.Col - fact].Empty)
-                                SetPossible(CurrentCell, fact, -fact);
+                                await SetPossible(CurrentCell, fact, -fact);
                         }
                         if (CurrentCell.Col + fact < Size && CurrentCell.Col + fact >= 0)
                         {
                             if (!Grid[CurrentCell.Row + fact, CurrentCell.Col + fact].Empty)
-                                SetPossible(CurrentCell, fact, fact);
+                                await SetPossible(CurrentCell, fact, fact);
                         }
                     }
                     break;
@@ -258,7 +262,20 @@ public class Board
         {
             NowPlaying = NowPlaying == Color.White ? Color.Black : Color.White;
         }
-        DeselectAll();
+
+        Checked = false;
+        List<Cell> checks = await CheckCheck();
+        DeselectAll(true);
+        if (checks.Count > 0)
+        {
+            foreach (var c in checks)
+            {
+                c.Checked = true;
+            }
+            Checked = true;
+            Console.WriteLine("Check!");
+        }
+
         await Update();
     }
     public async Task Update()
@@ -268,7 +285,7 @@ public class Board
             await Notify.Invoke(this);
         }
     }
-    public void DeselectAll()
+    public void DeselectAll(bool Extended = false)
     {
         for (int i = 0; i < Size; i++)
         {
@@ -277,6 +294,10 @@ public class Board
                 Grid[i, j].Selected = false;
                 Grid[i, j].Possible = false;
                 Grid[i, j].Castles  = false;
+                if (Extended)
+                {
+                    Grid[i, j].Checked = false;
+                }
             }
         }
     }
@@ -299,23 +320,46 @@ public class Board
     }
     private bool CheckCollision(Cell CurrentCell, int row, int col)
     {
-        if (CurrentCell.Row + row < Size && CurrentCell.Row + row >= 0 && CurrentCell.Col + col < Size && CurrentCell.Col + col >= 0)
+        try
         {
-            return !Grid[CurrentCell.Row + row, CurrentCell.Col + col].Empty;
+            if (CurrentCell.Row + row < Size && CurrentCell.Row + row >= 0 && CurrentCell.Col + col < Size && CurrentCell.Col + col >= 0)
+            {
+                return !Grid[CurrentCell.Row + row, CurrentCell.Col + col].Empty;
+            }
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        
         return false;
     }
 
-    private bool SetPossible(Cell CurrentCell, int row, int col, bool checkOnly = false, bool castles = false)
+    private async Task<bool> SetPossible(Cell CurrentCell, int row, int col, bool checkOnly = false, bool castles = false)
     {
         if(CurrentCell.Row + row < Size && CurrentCell.Row + row >= 0 && CurrentCell.Col + col < Size && CurrentCell.Col + col >= 0)
         {
-            if (!Grid[CurrentCell.Row + row, CurrentCell.Col + col].Empty && CurrentCell.Piece.Color == Grid[CurrentCell.Row + row, CurrentCell.Col + col].Piece.Color)
+            if (!CurrentCell.Empty && !Grid[CurrentCell.Row + row, CurrentCell.Col + col].Empty && CurrentCell.Piece.Color == Grid[CurrentCell.Row + row, CurrentCell.Col + col].Piece.Color)
                 return false;
-            if(!checkOnly)
+            // Causes program to recursively check for checks
+            //if (Checked && !CurrentCell.Empty)
+            //{
+            //    //Check if currentcell +row & +col 
+            //    Board boardCopy = new(8);
+            //    boardCopy.Grid = (Cell[,])Grid.Clone();
+            //    await boardCopy.Move(boardCopy.Grid[CurrentCell.Row, CurrentCell.Col], boardCopy.Grid[CurrentCell.Row + row, CurrentCell.Col + col]);
+
+            //    var list = await boardCopy.CheckCheck();
+            //    if (list.Count() > 0)
+            //    {
+            //        return false;
+            //    }
+            //}
+            if (!checkOnly)
                 Grid[CurrentCell.Row + row, CurrentCell.Col + col].Possible = true;
-            if(castles)
+            if (castles)
                 Grid[CurrentCell.Row + row, CurrentCell.Col + col].Castles = true;
+
             return true;
         }
         return false;
@@ -330,5 +374,138 @@ public class Board
                 break;
 
         }
+    }
+
+    public async Task<List<Cell>> CheckCheck()
+    {
+        List<Cell> list = new List<Cell>();
+
+        foreach (Cell cell in Grid)
+        {
+            if (!cell.Empty)
+                if (cell.Piece.Type == PieceType.King)
+                {
+                    list.AddRange(await HitBy(cell));
+                }
+        }
+
+        return list;
+    }
+
+
+    private async Task<List<Cell>> HitBy(Cell currentCell)
+    {
+        List<Cell> list = new List<Cell>();
+
+        foreach (Cell cell in Grid)
+        {
+            if (cell.Empty)
+                continue;
+
+            list.AddRange(await Attacks(cell, currentCell));
+        }
+
+        list.RemoveAll(item => item == null);
+
+        return list;
+    }
+
+    private async Task<List<Cell>> Attacks(Cell attacker, Cell currentCell)
+    {
+        List<Cell> List = new List<Cell>();
+        if (attacker.Piece.Color == currentCell.Piece.Color)
+            return List;
+
+        switch(attacker.Piece.Type){
+            case PieceType.Knight:
+                if(await Collision(attacker, currentCell, 2, 1))
+                    List.Add(Grid[attacker.Row + 2, attacker.Col + 1]);
+                if(await Collision(attacker, currentCell, 2, -1))
+                    List.Add(Grid[attacker.Row + 2, attacker.Col - 1]);
+                if (await Collision(attacker, currentCell, -2, 1))
+                    List.Add(Grid[attacker.Row - 2, attacker.Col + 1]);
+                if (await Collision(attacker, currentCell, -2, -1))
+                    List.Add(Grid[attacker.Row - 2, attacker.Col - 1]);
+                if (await Collision(attacker, currentCell, 1, 2))
+                    List.Add(Grid[attacker.Row + 1, attacker.Col + 2]);
+                if (await Collision(attacker, currentCell, 1, -2))
+                    List.Add(Grid[attacker.Row + 1, attacker.Col - 2]);
+                if (await Collision(attacker, currentCell, -1, 2))
+                    List.Add(Grid[attacker.Row - 1, attacker.Col + 2]);
+                if (await Collision(attacker, currentCell, -1, -2))
+                    List.Add(Grid[attacker.Row - 1, attacker.Col - 2]);
+                break;
+            case PieceType.Rook:
+                List.Add(CollisionRay(attacker, currentCell, 0, 1));
+                List.Add(CollisionRay(attacker, currentCell, 1, 0));
+                List.Add(CollisionRay(attacker, currentCell, 0, -1));
+                List.Add(CollisionRay(attacker, currentCell, -1, 0));
+                break;
+            case PieceType.Bishop:
+                List.Add(CollisionRay(attacker, currentCell, 1, 1));
+                List.Add(CollisionRay(attacker, currentCell, 1, -1));
+                List.Add(CollisionRay(attacker, currentCell, -1, -1));
+                List.Add(CollisionRay(attacker, currentCell, -1, 1));
+                break;
+            case PieceType.Queen:
+                List.Add(CollisionRay(attacker, currentCell, 0, 1));
+                List.Add(CollisionRay(attacker, currentCell, 1, 0));
+                List.Add(CollisionRay(attacker, currentCell, 0, -1));
+                List.Add(CollisionRay(attacker, currentCell, -1, 0));
+                List.Add(CollisionRay(attacker, currentCell, 1, 1));
+                List.Add(CollisionRay(attacker, currentCell, 1, -1));
+                List.Add(CollisionRay(attacker, currentCell, -1, -1));
+                List.Add(CollisionRay(attacker, currentCell, -1, 1));
+                break;
+            case PieceType.Pawn:
+                break;
+            case PieceType.King:
+                if (await Collision(attacker, currentCell, 1, 1))
+                    List.Add(Grid[attacker.Row + 1, attacker.Col + 1]);
+                if (await Collision(attacker, currentCell, -1, -1))
+                    List.Add(Grid[attacker.Row - 1, attacker.Col - 1]);
+                if (await Collision(attacker, currentCell, -1, 1))
+                    List.Add(Grid[attacker.Row - 1, attacker.Col + 1]);
+                if (await Collision(attacker, currentCell, 1, -1))
+                    List.Add(Grid[attacker.Row + 1, attacker.Col - 1]);
+                if (await Collision(attacker, currentCell, 1, 0))
+                    List.Add(Grid[attacker.Row + 1, attacker.Col]);
+                if (await Collision(attacker, currentCell, - 1, 0))
+                    List.Add(Grid[attacker.Row - 1, attacker.Col]);
+                if (await Collision(attacker, currentCell, 0, 1))
+                    List.Add(Grid[attacker.Row, attacker.Col + 1]);
+                if (await Collision(attacker, currentCell, 0, -1))
+                    List.Add(Grid[attacker.Row, attacker.Col - 1]);
+                break;
+        }
+
+        List.RemoveAll(item => item == null);
+
+        return List;
+    }
+
+    private async Task<bool> Collision(Cell attacker, Cell currentCell, int row, int col)
+    {
+        if (await SetPossible(attacker, row, col, true))
+            if (Grid[attacker.Row + row, attacker.Col + col] == currentCell)
+                return true;
+        return false;
+    }
+
+    private Cell CollisionRay(Cell attacker, Cell currentCell, int row, int col)
+    {
+        Cell Cell = null;
+        for (int i = 1; i < Size; i++)
+        {   
+            if (CheckCollision(attacker, i * row, i * col))
+            {
+               if(Grid[attacker.Row + (i*row), attacker.Col + (i*col)] == currentCell)
+                {
+                    Cell = attacker.Piece.Type == PieceType.King ? attacker : currentCell;
+                }
+            break;
+            }
+        }
+        return Cell;
     }
 }
