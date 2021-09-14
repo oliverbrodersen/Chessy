@@ -57,7 +57,7 @@
         if (string.IsNullOrEmpty(key) || !multiplayerService.Games.ContainsKey(key))
         {
             key = string.Empty;
-            board = new Board(8);
+            board = new Board();
             board.ResetBoard();
             MyColor = Color.White;
         }
