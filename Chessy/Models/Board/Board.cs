@@ -9,7 +9,7 @@ public class Board
     public List<Piece> Pieces {  get; set;}
     public Color NowPlaying { get; set; }
     public List<Piece> Captured { get; set; }
-    public Piece LastMove {  get; set; }
+    public (Cell Source, Cell Destination) LastMove {  get; set; }
     public bool Promotion { get; set; }
     public bool Started {  get; set; }
     public bool SecondPlayerConnected {  get; set; }
@@ -56,6 +56,37 @@ public class Board
             Pieces.Add(new Pawn(Color.Black, new Cell(6, i)));
         }
     }
+
+    internal void Move(Cell selected, Cell target)
+    {
+        selected.LastMove = true;
+        target.LastMove = true;
+        LastMove = (selected.Copy(), target.Copy());
+
+        Piece piece = GetPiece(selected.Row, selected.Col);
+        Piece targetPiece = GetPiece(target.Row, target.Col);
+        if (targetPiece is not null)
+            Capture(targetPiece);
+
+        piece.Move(target);
+        if(!target.Castles)
+            NowPlaying = NowPlaying == Color.White ? Color.Black : Color.White;
+        else
+        {
+            if (target.Col == 1)
+                Move(new Cell(target.Row, 0), new Cell(target.Row, 2));
+            if (target.Col == 5)
+                Move(new Cell(target.Row, 7), new Cell(target.Row, 4));
+        }
+    }
+
+    private void Capture(Piece targetPiece)
+    {
+        targetPiece.Position = null;
+        Pieces.Remove(targetPiece);
+        Captured.Add(targetPiece);
+    }
+
     public Piece GetPiece(int row, int col)
     {
         foreach(Piece piece in Pieces)
@@ -76,13 +107,6 @@ public class Board
         if (Notify != null)
         {
             await Notify.Invoke(this);
-        }
-    }
-    public void DeselectAll(bool Extended = false)
-    {
-        foreach(var piece in Pieces)
-        {
-            piece.Deselect(Extended);
         }
     }
     public int Points(Color color)

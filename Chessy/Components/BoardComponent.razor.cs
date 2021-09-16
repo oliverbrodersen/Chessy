@@ -14,7 +14,7 @@ public partial class BoardComponent
 
     public Cell[,] Grid {  get; set; }
 
-    public bool LocalTwoPlayer { get; set; }
+    public bool LocalTwoPlayer { get; set; } = true;
     
     private string[] letters;
     protected override void OnInitialized()
@@ -52,28 +52,37 @@ public partial class BoardComponent
 
     public async Task ClickCell(Cell cell, DragEventArgs dragEventArgs = null)
     {
-        if (cell.Selected)
+        if (PlayingColor == Board.NowPlaying || LocalTwoPlayer)
         {
-            DeselectAll();
-            return;
-        }
+            if (cell.Selected)
+            {
+                DeselectAll();
+                return;
+            }
 
-        DeselectAll();
-
-        Cell selected = GetSelected();
-        if (selected is not null && cell.Possible)
-        {
-            //Move
+            Cell selected = GetSelected();
+            if (selected is not null && cell.Possible)
+            {
+                DeselectAll(true, false);
+                Board.Move(selected, cell);
+                DeselectAll(false, true);
+                return;
+            }
+            else if (!IsEmpty(cell) && GetPiece(cell).Color == Board.NowPlaying)
+            {
+                DeselectAll(true);
+                //Player clicks own piece
+                MarkNextLegalMoves(GetPiece(cell));
+            }
+            else
+            {
+                DeselectAll();
+            }
+            cell.Selected = true;
         }
-        else if (!IsEmpty(cell) && GetPiece(cell).Color == PlayingColor)
-        {
-            //Player clicks own piece
-            MarkNextLegalMoves(GetPiece(cell));
-        }
-        cell.Selected = true;
     }
 
-    private void DeselectAll()
+    private void DeselectAll(bool extended = false, bool castles = false)
     {
         for (int i = 0; i < 8; i++)
         {
@@ -81,21 +90,65 @@ public partial class BoardComponent
             {
                 Grid[i, j].Selected = false;
                 Grid[i, j].Possible = false;
+
+                if (extended)
+                {
+                    Grid[i, j].LastMove = false;
+                }
+
+                if (castles)
+                    Grid[i, j].Castles = false;
             }
         }
     }
 
     private void MarkNextLegalMoves(Piece piece)
     {
-        if (piece.Color == PlayingColor)
+        if (piece.Color == PlayingColor || LocalTwoPlayer)
         {
             switch (piece.Type)
             {
                 case PieceType.Pawn:
-                    if(MarkPossible(piece, piece.MovementPattern[0][0], piece.MovementPattern[0][1]) && piece.FirstMove)
-                        MarkPossible(piece, piece.MovementPattern[0][0] * 2, piece.MovementPattern[0][1] * 2);
+                    Piece rPiece = GetPiece(new Cell(piece.Position.Row + piece.MovementPattern[0][0], piece.Position.Col + 1));
+                    Piece lPiece = GetPiece(new Cell(piece.Position.Row + piece.MovementPattern[0][0], piece.Position.Col - 1));
+                    if(rPiece is not null && rPiece.Color != piece.Color)
+                        MarkPossible(piece, piece.MovementPattern[0][0], 1);
+                    if(lPiece is not null && lPiece.Color != piece.Color)
+                        MarkPossible(piece, piece.MovementPattern[0][0], -1);
+
+                    if(GetPiece(new Cell(piece.Position.Row + piece.MovementPattern[0][0], piece.Position.Col)) is null)
+                    {
+                        MarkPossible(piece, piece.MovementPattern[0][0], 0); 
+                        if (piece.FirstMove && GetPiece(new Cell(piece.Position.Row + ( piece.MovementPattern[0][0] * 2 ), piece.Position.Col)) is null)
+                        {
+                            MarkPossible(piece, piece.MovementPattern[0][0] * 2, 0);
+                        }
+                    }
                     break;
                 case PieceType.King:
+                    foreach (var i in piece.MovementPattern)
+                    {
+                        MarkPossible(piece, i[0], i[1]);
+                    }
+
+                    if (MarkPossible(piece, 0, 1) && piece.FirstMove)
+                    {
+                        Piece rRayPiece = MarkRay(piece, 0, 1, true);
+                        if (rRayPiece.Type == PieceType.Rook && piece.FirstMove && piece.Color == rRayPiece.Color)
+                        {
+                            MarkPossible(piece, 0, 2, false, true);
+                        }
+                    }
+                    if (MarkPossible(piece, 0, -1) && piece.FirstMove)
+                    {
+                        Piece lRayPiece = MarkRay(piece, 0, -1, true);
+                        if (lRayPiece.Type == PieceType.Rook && piece.FirstMove && piece.Color == lRayPiece.Color)
+                        {
+                            lRayPiece.Position.Castles = true;
+                            MarkPossible(piece, 0, -2, false, true);
+                        }
+                    }
+                    break;
                 case PieceType.Knight:
                     foreach (var i in piece.MovementPattern)
                     {
@@ -114,39 +167,33 @@ public partial class BoardComponent
         }
     }
 
-    private void MarkRay(Piece piece, int row, int col)
+    private Piece MarkRay(Piece piece, int row, int col, bool onlyCheck = false)
     {
         for (int i = 1; i < 8; i++)
         {
-            MarkPossible(piece, row * i, col * i);
-            if (CheckCollision(piece, i * row, i * col))
-                break;
+            if(!onlyCheck)
+                MarkPossible(piece, row * i, col * i);
+            if (!IsEmpty(new Cell(piece.Position.Row + (i * row), piece.Position.Col + (i * col))))
+                return GetPiece(new Cell(piece.Position.Row + (i * row), piece.Position.Col + (i * col)));
         }
+        return null;
     }
 
-    private bool MarkPossible(Piece piece, int row, int col)
+    private bool MarkPossible(Piece piece, int row, int col, bool justCheck = false, bool castles = false)
     {
         if (piece.Position.Row + row < 8 && piece.Position.Row + row >= 0 &&
             piece.Position.Col + col < 8 && piece.Position.Col + col >= 0)
         {
             Piece hit = Board.GetPiece(piece.Position.Row + row, piece.Position.Col + col);
-            if (hit is null || hit.Color != PlayingColor)
+            if (hit is null || hit.Color != piece.Color)
             {
+                if(justCheck)
+                    return true;
                 Grid[piece.Position.Row + row, piece.Position.Col + col].Possible = true;
+                Grid[piece.Position.Row + row, piece.Position.Col + col].Castles = castles;
                 return true;
             }
         }
-        return false;
-    }
-
-
-    private bool CheckCollision(Piece piece, int row, int col)
-    {
-        if (piece.Position.Row + row < 8 && piece.Position.Row + row >= 0 && piece.Position.Col + col < 8 && piece.Position.Col + col >= 0)
-        {
-            return !IsEmpty(Grid[piece.Position.Row + row, piece.Position.Col + col]);
-        }
-
         return false;
     }
 

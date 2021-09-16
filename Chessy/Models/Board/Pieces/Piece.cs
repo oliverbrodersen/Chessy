@@ -37,7 +37,6 @@ public abstract class Piece
     {
         Selected = false;
         Possible = false;
-        Castles = false;
         if (extended)
         {
             Checked = false;
@@ -58,5 +57,12 @@ public abstract class Piece
     internal string Icon()
     {
         return Color + "_" + Type;
+    }
+
+    internal void Move(Cell cell)
+    {
+        FirstMove = false;
+        LastCell = Position.Copy();
+        Position = cell;
     }
 }

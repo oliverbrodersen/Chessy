@@ -18,4 +18,11 @@ public class Cell
         Row = row;
         Col = col;
     }
+
+    internal Cell Copy()
+    {
+        var cell = new Cell(Row, Col);
+        cell.Piece = Piece;
+        return cell;
+    }
 }
