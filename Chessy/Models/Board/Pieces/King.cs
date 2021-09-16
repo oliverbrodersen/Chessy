@@ -10,8 +10,6 @@ public class King : Piece
         MovementPattern = new List<int[]>();
         MovementPattern.Add(new int[] { 1, 0 });
         MovementPattern.Add(new int[] { -1, 0 });
-        MovementPattern.Add(new int[] { 0, 1 });
-        MovementPattern.Add(new int[] { 0, -1 });
         MovementPattern.Add(new int[] { 1, 1 });
         MovementPattern.Add(new int[] { -1, 1 });
         MovementPattern.Add(new int[] { -1, -1 });
