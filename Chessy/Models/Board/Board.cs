@@ -69,8 +69,11 @@ public class Board
             Capture(targetPiece);
 
         piece.Move(target);
-        if(!target.Castles)
-            NowPlaying = NowPlaying == Color.White ? Color.Black : Color.White;
+
+        if (piece is Pawn && (piece.Position.Row == 0 || piece.Position.Row == 7))
+            Promotion = true;
+        else if(!target.Castles)
+            NextTurn();
         else
         {
             if (target.Col == 1)
@@ -78,6 +81,12 @@ public class Board
             if (target.Col == 5)
                 Move(new Cell(target.Row, 7), new Cell(target.Row, 4));
         }
+        Update();
+    }
+
+    public void NextTurn()
+    {
+        NowPlaying = NowPlaying == Color.White ? Color.Black : Color.White;
     }
 
     private void Capture(Piece targetPiece)
@@ -109,6 +118,7 @@ public class Board
             await Notify.Invoke(this);
         }
     }
+
     public int Points(Color color)
     {
         int w = 0, b = 0;

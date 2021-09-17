@@ -2,7 +2,7 @@
 @import url('file:///Z:\Code\C#\Chessy\Chessy\Chessy\wwwroot\css\site.css');
 body[data-theme=false] {
     --background: #f2f2f2;
-    --card-background: #e2c599;
+    --card-background: #ffd085;
     --cell-background2: White;
     --cell-background: #ffe0af;
     --cell-selected: #f3b425;

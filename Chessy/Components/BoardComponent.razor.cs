@@ -1,5 +1,6 @@
 ﻿using Chessy.Models;
 using Chessy.Models.Board;
+using Chessy.Models.Board.Pieces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -14,7 +15,7 @@ public partial class BoardComponent
 
     public Cell[,] Grid {  get; set; }
 
-    public bool LocalTwoPlayer { get; set; } = true;
+    public bool LocalTwoPlayer { get; set; }
     
     private string[] letters;
     protected override void OnInitialized()
@@ -70,7 +71,7 @@ public partial class BoardComponent
             }
             else if (!IsEmpty(cell) && GetPiece(cell).Color == Board.NowPlaying)
             {
-                DeselectAll(true);
+                DeselectAll();
                 //Player clicks own piece
                 MarkNextLegalMoves(GetPiece(cell));
             }
@@ -195,6 +196,28 @@ public partial class BoardComponent
             }
         }
         return false;
+    }
+
+    public void PromotePiece(PieceType newPiece)
+    {
+        Board.Promotion = false;
+        Board.Pieces.Remove(GetPiece(Board.LastMove.Destination));
+        switch (newPiece)
+        {
+            case PieceType.Queen:
+                Board.Pieces.Add(new Queen(Board.NowPlaying, Board.LastMove.Destination, false));
+                break;
+            case PieceType.Knight:
+                Board.Pieces.Add(new Knight(Board.NowPlaying, Board.LastMove.Destination, false));
+                break;
+            case PieceType.Rook:
+                Board.Pieces.Add(new Rook(Board.NowPlaying, Board.LastMove.Destination, false));
+                break;
+            case PieceType.Bishop:
+                Board.Pieces.Add(new Bishop(Board.NowPlaying, Board.LastMove.Destination, false));
+                break;
+        }
+        Board.NextTurn();
     }
 
     public bool IsEmpty(Cell cell)
