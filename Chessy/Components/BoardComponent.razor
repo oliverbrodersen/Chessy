@@ -8,10 +8,10 @@
     {
         <div class="promotion-container">
             <div class="choices">
-                <img src=@($"/img/chess set/{Board.NowPlaying}_bishop.png") @*@onclick=@(()=>PromotePiece(new (PieceType.Bishop, Board.NowPlaying)))*@ />
-                <img src=@($"/img/chess set/{Board.NowPlaying}_knight.png") @*@onclick=@(()=>PromotePiece(new (PieceType.Knight, Board.NowPlaying)))*@ />
-                <img src=@($"/img/chess set/{Board.NowPlaying}_rook.png")   @*@onclick=@(()=>PromotePiece(new (PieceType.Rook,   Board.NowPlaying)))*@ />
-                <img src=@($"/img/chess set/{Board.NowPlaying}_queen.png")  @*@onclick=@(()=>PromotePiece(new (PieceType.Queen,  Board.NowPlaying)))*@ />
+                <img src=@($"/img/chess set/{Board.NowPlaying}_bishop.png") @onclick=@(()=>PromotePiece(PieceType.Bishop)) />
+                <img src=@($"/img/chess set/{Board.NowPlaying}_knight.png") @onclick=@(()=>PromotePiece(PieceType.Knight)) />
+                <img src=@($"/img/chess set/{Board.NowPlaying}_rook.png")   @onclick=@(()=>PromotePiece(PieceType.Rook)) />
+                <img src=@($"/img/chess set/{Board.NowPlaying}_queen.png")  @onclick=@(()=>PromotePiece(PieceType.Queen)) />
             </div>
         </div>
     }
