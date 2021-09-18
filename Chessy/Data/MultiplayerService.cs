@@ -17,14 +17,12 @@ public class MultiplayerService
         if (!Games.ContainsKey(key))
             return null;
 
-        if(Games[key] != null && Games[key].SecondPlayerConnected == false)
-            Games[key].SecondPlayerConnected = true;
-
         return Games[key];
     }
 
     public void StartBoard(string key, Board board)
     {
+        board.IsSecondPlayer = true;
         Games.Add(key, board);
     }
 

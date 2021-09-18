@@ -19,21 +19,21 @@
     justify-content: space-around;
     margin: 0 3vmin;
 }
-    .board .letters div {
-        color: var(--text-muted);
-        font-size: 2vmin;
-        height: 3vmin;
-        font-family: Roboto;
-        font-weight: bold;
-    }
-    .board .row-number {
-        color: var(--text-muted);
-        font-size: 2vmin;
-        width: 3vmin;
-        font-family: Roboto;
-        font-weight: bold;
-        text-align: center;
-    }
+.board .letters div {
+    color: var(--text-muted);
+    font-size: 2vmin;
+    height: 3vmin;
+    font-family: Roboto;
+    font-weight: bold;
+}
+.board .row-number {
+    color: var(--text-muted);
+    font-size: 2vmin;
+    width: 3vmin;
+    font-family: Roboto;
+    font-weight: bold;
+    text-align: center;
+}
 
 .board-grid {
     border-radius: 1vmin;
@@ -113,26 +113,26 @@
     box-shadow: rgba(0, 0, 0, 0.2) 0px .3vmin .6vmin, rgba(0, 0, 0, 0.1) 0px 1vmin 1.95vmin -0.45vmin, rgba(0, 0, 0, 0.2) 0px -.4vmin 0px inset;
 }
 
-    .promotion-container .choices {
-        display: flex;
-        justify-content: space-around;
-    }
+.promotion-container .choices {
+    display: flex;
+    justify-content: space-around;
+}
 
-        .promotion-container .choices img {
-            height: 8vmin;
-            width: 8vmin;
-            margin: 0 1vmin;
-            background: var(--cell-background2);
-            object-fit: contain;
-            padding: 1vmin;
-            transition: transform ease .1s, box-shadow .1s ease;
-            cursor: pointer;
-        }
+.promotion-container .choices img {
+    height: 8vmin;
+    width: 8vmin;
+    margin: 0 1vmin;
+    background: var(--cell-background2);
+    object-fit: contain;
+    padding: 1vmin;
+    transition: transform ease .1s, box-shadow .1s ease;
+    cursor: pointer;
+}
 
-            .promotion-container .choices img:hover {
-                transform: scale(1.1);
-                box-shadow: rgba(0, 0, 0, 0.15) 0px 2.25vmin 3.75vmin, rgba(0, 0, 0, 0.05) 0px 0.7vmin 1.5vmin;
-            }
+.promotion-container .choices img:hover {
+    transform: scale(1.1);
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2.25vmin 3.75vmin, rgba(0, 0, 0, 0.05) 0px 0.7vmin 1.5vmin;
+}
 
 .White_Pawn, .Black_Pawn {
     height: 65% !important;
@@ -164,23 +164,23 @@
 .possible{
     cursor: pointer;
 }
-    .possible::after {
-        content: " ";
-        height: 6vmin;
-        width: 6vmin;
-        background: transparent;
-        border-radius: 5vmin;
-        position: absolute;
-        opacity: 0.2;
-        margin-bottom: 3.75vmin;
-        transform: translateY(50%);
-        box-sizing: border-box;
-        border: .6vmin solid var(--cell-background2);
-        transition: border .1s ease;
-    }
-    .possible:hover::after {
-        border: 1.5vmin solid var(--cell-background2);
-    }
+.possible::after {
+    content: " ";
+    height: 6vmin;
+    width: 6vmin;
+    background: transparent;
+    border-radius: 5vmin;
+    position: absolute;
+    opacity: 0.2;
+    margin-bottom: 3.75vmin;
+    transform: translateY(50%);
+    box-sizing: border-box;
+    border: .6vmin solid var(--cell-background2);
+    transition: border .1s ease;
+}
+.possible:hover::after {
+    border: 1.5vmin solid var(--cell-background2);
+}
 
 .dark.possible {
     background: var(--cell-possible-dark);
@@ -188,4 +188,10 @@
 
 .light.possible {
     background: var(--cell-possible-light);
+}
+.spectating {
+    font-family: 'Hammersmith One' !important;
+    color: var(--text);
+    text-align: center;
+    font-size: 4vmin;
 }

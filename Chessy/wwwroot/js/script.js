@@ -1,8 +1,6 @@
 ﻿window.clipboardCopy = {
     copyText: function (text) {
-        navigator.clipboard.writeText(text).then(function () {
-            alert("Copied to clipboard!");
-        })
+        navigator.clipboard.writeText(text).then()
             .catch(function (error) {
                 alert(error);
             });

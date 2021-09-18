@@ -11,7 +11,7 @@ body[data-theme=false] {
     --cell-last-move-dark: #adc284;
     --cell-possible-light: #ffd678;
     --cell-possible-dark: #ffcb53;
-    --text: Black;
+    --text: #3f3f3f;
     --text2: #979797;
     --text-muted: #e3b062;
 }
@@ -101,7 +101,18 @@ a, .btn-link {
     align-items: center;
     flex-direction: row;
 }
-.board-container .menu{
+.container-container{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.board-container {
+    height: 100%;
+}
+.board-container .menu {
     width: 20vmin;
     background: var(--card-background);
     border-radius: 1vmin;
@@ -109,16 +120,25 @@ a, .btn-link {
     flex-direction: column;
     align-items: center;
     padding-bottom: 1.4vmin;
+    margin-bottom: 1vmin;
     box-shadow: rgba(0, 0, 0, 0.2) 0px .3vmin .6vmin, rgba(0, 0, 0, 0.1) 0px 1vmin 1.95vmin -0.45vmin, rgba(0, 0, 0, 0.2) 0px -.4vmin 0px inset;
-
 }
-    .board-container .menu .label {
-        font-size: 2vmin;
-        font-family: "JetBrains Mono",monospace;
-        color: var(--text);
-        margin-top: 2vmin;
-        margin-bottom: 1vmin;
-    }
+.menu-container {
+    display: flex;
+    flex-direction: column;
+}
+.menu-controlls{
+    display: flex;
+    justify-content: space-between
+}
+.board-container .menu .label {
+    font-size: 2vmin;
+    font-family: "JetBrains Mono",monospace;
+    color: var(--text);
+    margin-top: 2vmin;
+    text-align: center;
+    margin-bottom: 1vmin;
+}
 .board-container .menu .choices img {
     height: 6vmin;
     width: 6vmin;
@@ -147,13 +167,13 @@ a, .btn-link {
     margin-right: 1vmin;
 }
 
-.board-container .menu button {
+.board-container button {
     align-items: center;
     appearance: none;
     background-color: var(--cell-background2);
-    border-radius: 4px;
+    border-radius: .5vmin;
     border-width: 0;
-    box-shadow: rgba(45, 35, 66, 0.4) 0 0.3vmin 0.6vmin,rgba(45, 35, 66, 0.3) 0 1vmin 1.95vmin -0.45vmin,rgba(0,0,0,.3) 0 -0.45vmin 0 inset;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 .3vmin .6vmin, rgba(0, 0, 0, 0.1) 0 1vmin 1.95vmin -0.45vmin, rgba(0, 0, 0, 0.2) 0 -.4vmin 0 inset;
     box-sizing: border-box;
     color: var(--text);
     cursor: pointer;
@@ -176,24 +196,48 @@ a, .btn-link {
     will-change: box-shadow,transform;
     font-size: 1.5vmin;
 }
+.menu-controlls button {
+    background: var(--card-background);
+    width: 6vmin;
+    height: 5vmin;
+    color: var(--cell-background2);
+}
 .board-container .menu .subtext {
     color: var(--cell-background2);
     font-family: "JetBrains Mono",monospace;
+    font-size: 1.5vmin;
 }
-.board-container .menu button:focus {
-    box-shadow: rgba(0,0,0,.3) 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, rgba(0,0,0,.3) 0 -0.45vmin 0 inset;
-}
-
-.board-container .menu button:hover {
-    box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, rgba(0,0,0,.3) 0 -0.45vmin 0 inset;
-    transform: translateY(-1px);
+.board-container button:focus {
+    box-shadow: rgba(0, 0, 0, 0.2) 0 .3vmin .6vmin, rgba(0, 0, 0, 0.1) 0 1vmin 1.95vmin -0.45vmin, rgba(0, 0, 0, 0.2) 0 -.4vmin 0 inset;
 }
 
-.board-container .menu button:active {
-    box-shadow: rgba(0,0,0,.3) 0 3px -0.9vmin inset;
-    transform: translateY(1px);
+.board-container button:hover {
+    box-shadow: rgba(0, 0, 0, 0.2) 0 1vmin 1.2vmin, rgba(0, 0, 0, 0.1) 0 1vmin 1.95vmin -0.45vmin, rgba(0, 0, 0, 0.2) 0 -.4vmin 0 inset;
+    transform: translateY(-.2vmin);
+}
+
+.board-container button:active {
+    box-shadow: rgba(0, 0, 0, 0.2) 0 .2vmin .4vmin, rgba(0, 0, 0, 0.1) 0 1vmin 1.95vmin -0.45vmin, rgba(0, 0, 0, 0.2) 0 -.1vmin 0 inset;
+    transform: translateY(.1vmin);
 }
 
 .checked {
     background: var(--cell-danger) !important;
+}
+.material-icons{
+    font-size: 2vmin;
+}
+.rotate span {
+}
+.rotate:hover span {
+    animation: rotate .5s ease;
+    animation-iteration-count: 1;
+}
+@keyframes rotate{
+    0%{
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

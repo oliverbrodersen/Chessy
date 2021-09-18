@@ -65,4 +65,9 @@ public abstract class Piece
         LastCell = Position.Copy();
         Position = cell;
     }
+
+    internal bool inCheck()
+    {
+        return Checked;
+    }
 }

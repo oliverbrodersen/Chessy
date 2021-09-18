@@ -4,7 +4,6 @@ using Chessy.Models.Board.Pieces;
 namespace Chessy.Models.Board;
 public class Board
 {
-    private object board;
     public Guid Id {  get; }
     public List<Piece> Pieces {  get; set;}
     public Color NowPlaying { get; set; }
@@ -13,13 +12,14 @@ public class Board
     public bool Promotion { get; set; }
     public bool Started {  get; set; }
     public bool SecondPlayerConnected {  get; set; }
+    public bool IsSecondPlayer {  get; set; }
     public bool Checked {  get; set; }
     public Color SecondPlayerColor {  get; set;}
 
     /// <summary>
     /// EventHandler to update view with Title.
     /// </summary>
-    public event Func<Board, Task> Notify;
+    public event Func<bool, Task> Notify;
 
     public Board()
     {
@@ -32,6 +32,8 @@ public class Board
 
     public void ResetBoard()
     {
+        Pieces.Clear();
+
         Pieces.Add(new Rook     (Color.White, new Cell(0, 0)));
         Pieces.Add(new Knight   (Color.White, new Cell(0, 1)));
         Pieces.Add(new Bishop   (Color.White, new Cell(0, 2)));
@@ -55,6 +57,11 @@ public class Board
             Pieces.Add(new Pawn(Color.White, new Cell(1, i)));
             Pieces.Add(new Pawn(Color.Black, new Cell(6, i)));
         }
+
+        NowPlaying = Color.White;
+        Captured = new List<Piece>();
+
+        Update(true);
     }
 
     internal void Move(Cell selected, Cell target)
@@ -111,11 +118,11 @@ public class Board
         return Pieces.Where(p => p.Selected).FirstOrDefault();
     }
 
-    public async Task Update()
+    public async Task Update(bool Clear = false)
     {
         if (Notify != null)
         {
-            await Notify.Invoke(this);
+            await Notify.Invoke(Clear);
         }
     }
 
