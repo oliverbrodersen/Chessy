@@ -15,6 +15,12 @@
             </div>
         </div>
     }
+    @if (Spectating)
+    {
+        <div class="spectating">
+            Spectating
+        </div>
+    }
 
     <div class="now-playing">
         <div style="margin-top: 1vmin;"> 
@@ -51,7 +57,7 @@
                         int col = PlayingColor == Color.White ? j : 7 - j;
                         int copy_i = row, copy_j = col;
 
-                        <div class="board-cell @((row+col) % 2 == 0 ? "dark" : "light") @(Grid[row,col].Selected ? "selected" : (Grid[row,col].LastMove ? "last-move" : string.Empty)) @(Grid[row,col].Possible?"possible":string.Empty) @(Grid[row,col].Checked ? "checked" : string.Empty)" 
+                        <div class="board-cell @((row+col) % 2 == 0 ? "dark" : "light") @(Grid[row,col].Selected ? "selected" : (Grid[row,col].LastMove ? "last-move" : string.Empty)) @(Grid[row,col].Possible?"possible":string.Empty) @(Board.GetPiece(row,col) is not null ? (Board.GetPiece(row,col).Checked ? "checked" : string.Empty) : string.Empty)" 
                         @onclick=@(()=>ClickCell(Grid[copy_i,copy_j]))>
                             <img draggable="true" class="@Icon(Grid[row,col])" src="/img/chess set/@(Icon(Grid[row,col])).png">
                         </div>

@@ -8,39 +8,66 @@
 @inject NavigationManager Navigator
 @inject IJSRuntime JSRuntime
 
-
-<div class="board-container center" style="height: 100%;">
-    <BoardComponent Board=@board PlayingColor=@MyColor/>
-    @if (string.IsNullOrEmpty(key) && !board.Started && !board.SecondPlayerConnected)
+<div class="board-container center">
+    <BoardComponent Board=@board PlayingColor=@MyColor LocalTwoPlayer=@localTwoPlayer Spectating=@isSpectating/>
+    
+    @if (string.IsNullOrEmpty(key))
     {
-        <div class="menu">
-            <div class="label">
-                My color
-            </div>
-            <div class="choices">
-                <img src=@($"/img/chess set/{Color.White}_pawn.png") class="@(@MyColor == Color.White ? "selected" : string.Empty)" @onclick=@(() => SetColor(Color.White))/>
-                <img src=@($"/img/chess set/{Color.Black}_pawn.png") class="@(@MyColor == Color.Black ? "selected" : string.Empty)" @onclick=@(() => SetColor(Color.Black))/>
-            </div>
-            @if (string.IsNullOrEmpty(hostKey))
-            {
-                <button @onclick=@HostGame>
-                    Create
-                </button>
-            }
-            else
-            {
-                <div class="code">
-                    <strong>
-                        Code 
-                    </strong>
-                    <button @onclick=@CopyUrl>
-                        @hostKey
+        <div class="menu-container">
+            <div class="menu">
+                @if (!board.SecondPlayerConnected)
+                {
+                    <div class="label">
+                        My color
+                    </div>
+                    <div class="choices">
+                        <img src=@($"/img/chess set/{Color.White}_pawn.png") class="@(@MyColor == Color.White ? "selected" : string.Empty)" @onclick=@(() => SetColor(Color.White))/>
+                        <img src=@($"/img/chess set/{Color.Black}_pawn.png") class="@(@MyColor == Color.Black ? "selected" : string.Empty)" @onclick=@(() => SetColor(Color.Black))/>
+                    </div>
+                }
+                else{
+                    <div class="label">
+                        Second player connected
+                    </div>
+                }
+                @if (string.IsNullOrEmpty(hostKey))
+                {
+                    <button @onclick=@HostGame>
+                        Create
                     </button>
-                </div>
-                <div class="subtext">
-                    Click to copy url
-                </div>
-            }
+                }
+                else
+                {
+                    <div class="code">
+                        <strong>
+                            Code 
+                        </strong>
+                        <button @onclick=@CopyUrl>
+                            @hostKey
+                        </button>
+                    </div>
+                    <div class="subtext">
+                        Click to copy url
+                    </div>
+                }
+            </div>
+            <div class="menu-controlls">
+                <button @onclick=ResetBoard class="rotate">
+                    <span class="material-icons">
+                        refresh
+                    </span>
+                </button>
+                <button @onclick=ToggleLocalTwoPlayer>
+                    <span class="material-icons">
+                        @(localTwoPlayer?"people":"person")
+                    </span>
+                </button>
+                <button @onclick=TogglePause>
+                    <span class="material-icons">
+                        @(pause?"play_arrow":"pause")
+                    </span>
+                </button>
+            </div>
         </div>
     }
 </div>
@@ -49,8 +76,11 @@
     [Parameter]
     public string? key { get; set; }
     public Color MyColor { get; set; }
-    private Board board;
-    private string hostKey { get; set; }
+    private Board board { get; set; }
+    private string hostKey{ get; set; }
+    private bool localTwoPlayer{ get; set; }
+    private bool isSpectating{ get; set; }
+    private bool pause { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,10 +94,30 @@
         else
         {
             board = multiplayerService.GetBoard(key);
-            MyColor = board.SecondPlayerColor;
+
+            if (board.IsSecondPlayer)
+            {
+                MyColor = board.SecondPlayerColor;
+                board.IsSecondPlayer = false;
+            }
+            else
+            {
+                MyColor = Color.White;
+                isSpectating = true;
+            }
+
+            await board.Update();
         }
-        
+
         board.Notify += OnNotify;
+    }
+    public void ToggleLocalTwoPlayer()
+    {
+        localTwoPlayer = !localTwoPlayer;
+    }
+    public void TogglePause()
+    {
+        pause = !pause;
     }
 
     public void HostGame()
@@ -86,8 +136,12 @@
     {
         MyColor = color;
     }
+    public void ResetBoard()
+    {
+        board.ResetBoard();
+    }
 
-    public async Task OnNotify(Board board)
+    public async Task OnNotify(bool board)
     {
         await InvokeAsync(() =>
         {
