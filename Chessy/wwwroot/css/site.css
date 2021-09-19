@@ -155,6 +155,9 @@ a, .btn-link {
 .board-container .menu button{
     margin: 1vmin 0;
 }
+.menu button {
+    background: var(--cell-background2);
+}
 .board-container .menu .code {
     display: flex;
     justify-content: center;
@@ -196,6 +199,21 @@ a, .btn-link {
     will-change: box-shadow,transform;
     font-size: 1.5vmin;
 }
+.time-controlls{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 2vmin;
+}
+    .time-controlls button {
+        margin: 1vmin .5vmin !important;
+        background: var(--cell-background2);
+        opacity: .6;
+    }
+.time-controlls button.active {
+    opacity: 1;
+}
+
 .menu-controlls button {
     background: var(--card-background);
     width: 6vmin;
