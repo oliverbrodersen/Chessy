@@ -202,11 +202,13 @@ public class Board
         if(w > 900)
         {
             GameOver = true;
+            timer.Stop();
             return color == Color.White ? "Winner" : "Looser";
         }
         else if (b > 900)
         {
             GameOver = true;
+            timer.Stop();
             return color == Color.Black ? "Winner" : "Looser";
         }
 

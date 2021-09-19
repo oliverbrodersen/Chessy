@@ -261,6 +261,9 @@ a, .btn-link {
     transform: translateY(0vmin);
     font-weight: bold;
 }
+    .timer.danger {
+        background-color: var( --cell-danger);
+    }
 .c4 {
     display: flex;
     align-items: end;
