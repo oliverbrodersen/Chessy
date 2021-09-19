@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 namespace Chessy.Models.Board;
 public abstract class Piece
 {
