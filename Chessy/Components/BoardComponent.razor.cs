@@ -57,7 +57,7 @@ public partial class BoardComponent
 
     public async Task ClickCell(Cell cell, DragEventArgs dragEventArgs = null)
     {
-        if (!Spectating && (PlayingColor == Board.NowPlaying || LocalTwoPlayer))
+        if (!Spectating && (PlayingColor == Board.NowPlaying || LocalTwoPlayer) && !Board.GameOver)
         {
             if (cell.Selected)
             {

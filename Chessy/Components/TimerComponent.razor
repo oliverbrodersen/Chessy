@@ -1,0 +1,12 @@
+﻿@using System.Timers
+<div class="timer @(NowPlaying?"now-playing":string.Empty)">
+    @(new TimeSpan(0,0,0,Time,0).ToString("m\\:ss"))
+</div>
+
+@code { 
+    [Parameter]
+    public int Time { get; set; }
+
+    [Parameter]
+    public bool NowPlaying{ get; set; }
+}

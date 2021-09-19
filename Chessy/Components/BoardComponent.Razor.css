@@ -99,8 +99,12 @@
     padding-bottom: 10%;
     cursor: grab;
     z-index: 1;
+    transition: opacity .5s ease, filter .5s ease;
 }
-
+.board.game-over img {
+    opacity: .5;
+    filter: grayscale(1);
+}
 .promotion-container {
     position: absolute;
     height: auto;

@@ -4,7 +4,7 @@
 @inject BoardService boardService
 
 <div>
-    @if (Board.Promotion && PlayingColor == Board.NowPlaying)
+    @if (Board.Promotion && (PlayingColor == Board.NowPlaying || LocalTwoPlayer))
     {
         <div class="promotion-container">
             <div class="choices">
@@ -26,7 +26,7 @@
         <div style="margin-top: 1vmin;"> 
             <span>@Board.Points(OpponentColor())</span> <strong>@OpponentColor()</strong> @(Board.NowPlaying == OpponentColor() ? "(Now playing)" : string.Empty)
         </div>
-        <div>
+        <div class="c4">
             @foreach(Piece p in @Board.Captured)
             {
                 @if (p.Color == PlayingColor)
@@ -34,9 +34,10 @@
                     <img class="@p.Icon()" src="/img/chess set/@(p.Icon()).png">
                 }
             }
+            <TimerComponent Time=@((OpponentColor() == Color.White)?Board.WhiteTimeLeft:Board.BlackTimeLeft) NowPlaying=@(Board.NowPlaying == OpponentColor())/>
         </div>
     </div>
-    <div class="board">
+    <div class="board @(Board.GameOver?"game-over":string.Empty)">
         <div class="letters">
             @for(int i = 0; i < letters.Count(); i++)
             {
@@ -81,13 +82,16 @@
             <span>@Board.Points(PlayingColor)</span> <strong>@PlayingColor</strong> @(Board.NowPlaying == PlayingColor ? "(Now playing)" : string.Empty)
         </div>
         <div>
+        </div>
+        <div class="c4">
             @foreach(Piece p in @Board.Captured)
             {
-                @if (p.Color == OpponentColor())
+                @if (p.Color != PlayingColor)
                 {
                     <img class="@p.Icon()" src="/img/chess set/@(p.Icon()).png">
                 }
             }
+            <TimerComponent Time=@((PlayingColor == Color.White)?Board.WhiteTimeLeft:Board.BlackTimeLeft) NowPlaying=@(Board.NowPlaying == PlayingColor)/>
         </div>
     </div>
 </div>

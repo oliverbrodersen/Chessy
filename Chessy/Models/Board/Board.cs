@@ -1,5 +1,10 @@
 ﻿
 using Chessy.Models.Board.Pieces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Timers;
 
 namespace Chessy.Models.Board;
 public class Board
@@ -14,20 +19,29 @@ public class Board
     public bool SecondPlayerConnected {  get; set; }
     public bool IsSecondPlayer {  get; set; }
     public bool Checked {  get; set; }
+    public bool GameOver { get; private set; }
     public Color SecondPlayerColor {  get; set;}
+    public int Timeframe { get; set; }
+    public int WhiteTimeLeft { get; private set; }
+    public int BlackTimeLeft { get; private set; }
+    private System.Timers.Timer timer;
 
     /// <summary>
     /// EventHandler to update view with Title.
     /// </summary>
     public event Func<bool, Task> Notify;
 
-    public Board()
+    public Board(int timeFrame = 30)
     {
         Id = Guid.NewGuid();
 
         NowPlaying = Color.White;
         Captured = new List<Piece>();
         Pieces = new List<Piece>();
+
+        Timeframe = timeFrame;
+        WhiteTimeLeft = timeFrame;
+        BlackTimeLeft = timeFrame;
     }
 
     public void ResetBoard()
@@ -61,6 +75,19 @@ public class Board
         NowPlaying = Color.White;
         Captured = new List<Piece>();
 
+
+        WhiteTimeLeft = Timeframe;
+        BlackTimeLeft = Timeframe;
+
+        GameOver = false;
+
+        if (timer is not null)
+        {
+            timer.Stop();
+            timer.Dispose();
+            timer = null;
+        }
+
         Update(true);
     }
 
@@ -68,6 +95,7 @@ public class Board
     {
         selected.LastMove = true;
         target.LastMove = true;
+        Start();
         LastMove = (selected.Copy(), target.Copy());
 
         Piece piece = GetPiece(selected.Row, selected.Col);
@@ -87,6 +115,41 @@ public class Board
                 Move(new Cell(target.Row, 0), new Cell(target.Row, 2));
             if (target.Col == 5)
                 Move(new Cell(target.Row, 7), new Cell(target.Row, 4));
+        }
+        Update();
+    }
+
+    public void Start()
+    {
+        if (timer is not null)
+            return;
+        Started = true;
+        timer = new System.Timers.Timer(1000);
+        timer.AutoReset = true; 
+        timer.Elapsed += timer_elapsed;
+        timer.Start();
+    }
+
+    private void timer_elapsed(object? sender, ElapsedEventArgs e)
+    {
+        if (NowPlaying == Color.White)
+        {
+            WhiteTimeLeft--;
+            if (WhiteTimeLeft == 0)
+            {
+                GameOver = true;
+                timer.Stop();
+            }
+        }
+        else
+        {
+            BlackTimeLeft--;
+            if (BlackTimeLeft == 0)
+            {
+                GameOver = true;
+                timer.Stop();
+            }
+
         }
         Update();
     }
@@ -126,7 +189,7 @@ public class Board
         }
     }
 
-    public int Points(Color color)
+    public string Points(Color color)
     {
         int w = 0, b = 0;
         foreach(Piece p in Captured)
@@ -136,6 +199,17 @@ public class Board
             else
                 w += p.Value;
         }
-        return color == Color.White ? w - b : b - w;
+        if(w > 900)
+        {
+            GameOver = true;
+            return color == Color.White ? "Winner" : "Looser";
+        }
+        else if (b > 900)
+        {
+            GameOver = true;
+            return color == Color.Black ? "Winner" : "Looser";
+        }
+
+        return "" + (color == Color.White ? w - b : b - w);
     }
 }

@@ -99,6 +99,8 @@
             {
                 MyColor = board.SecondPlayerColor;
                 board.IsSecondPlayer = false;
+                board.SecondPlayerConnected = true;
+                board.ResetBoard();
             }
             else
             {

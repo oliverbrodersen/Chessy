@@ -241,3 +241,27 @@ a, .btn-link {
         transform: rotate(360deg);
     }
 }
+
+/*Timer*/
+.timer {
+    padding: 0.5vmin 1.2vmin;
+    font-size: 2vmin;
+    background: var(--cell-background2);
+    border-radius: .5vmin;
+    margin: 0 0.5vmin;
+    margin-top: .4vmin;
+    text-align: center;
+    color: var(--text);
+    font-family: Roboto;
+    box-shadow: rgb(0 0 0 / 20%) 0 0.2vmin 0.4vmin, rgb(0 0 0 / 10%) 0 .5vmin 0.95vmin -0.45vmin, rgb(0 0 0 / 20%) 0 -0.1vmin 0 inset; transform: translateY(.3vmin);
+    transition: box-shadow .15s,transform .15s;
+}
+.timer.now-playing {
+    box-shadow: rgba(0, 0, 0, 0.2) 0 .3vmin .6vmin, rgba(0, 0, 0, 0.1) 0 1vmin 1.95vmin -0.45vmin, rgba(0, 0, 0, 0.2) 0 -.4vmin 0 inset;
+    transform: translateY(0vmin);
+    font-weight: bold;
+}
+.c4 {
+    display: flex;
+    align-items: end;
+}
