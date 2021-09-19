@@ -177,8 +177,11 @@ public partial class BoardComponent
     {
         for (int i = 1; i < 8; i++)
         {
-            if(!MarkPossible(piece, row * i, col * i, onlyCheck))
+            MarkPossible(piece, i * row, i * col, onlyCheck);
+            if (GetPiece(new Cell(piece.Position.Row + (i * row), piece.Position.Col + (i * col))) is not null)
+            {
                 return GetPiece(new Cell(piece.Position.Row + (i * row), piece.Position.Col + (i * col)));
+            }
         }
         return null;
     }
