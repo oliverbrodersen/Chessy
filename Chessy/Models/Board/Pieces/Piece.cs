@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 namespace Chessy.Models.Board;
 public abstract class Piece
 {

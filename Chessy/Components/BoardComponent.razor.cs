@@ -1,7 +1,7 @@
 ﻿using Chessy.Models;
 using Chessy.Models.Board;
 using Chessy.Models.Board.Pieces;
-using System.Threading;
+using System;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
