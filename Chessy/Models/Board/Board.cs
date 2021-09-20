@@ -19,7 +19,7 @@ public class Board
     public bool SecondPlayerConnected {  get; set; }
     public bool IsSecondPlayer {  get; set; }
     public bool Checked {  get; set; }
-    public bool GameOver { get; private set; }
+    public bool GameOver { get; set; }
     public Color SecondPlayerColor {  get; set;}
     public int Timeframe { get; set; }
     public int WhiteTimeLeft { get; private set; }
@@ -38,10 +38,7 @@ public class Board
         NowPlaying = Color.White;
         Captured = new List<Piece>();
         Pieces = new List<Piece>();
-
-        Timeframe = timeFrame;
-        WhiteTimeLeft = timeFrame;
-        BlackTimeLeft = timeFrame;
+        SetTime(timeFrame);
     }
 
     public void ResetBoard()
@@ -118,7 +115,13 @@ public class Board
         }
         Update();
     }
-
+    public void SetTime(int timeFrame)
+    {
+        Timeframe = timeFrame;
+        WhiteTimeLeft = timeFrame;
+        BlackTimeLeft = timeFrame;
+        Update();
+    }
     public void Start()
     {
         if (timer is not null)

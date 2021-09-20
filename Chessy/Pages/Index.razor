@@ -21,17 +21,17 @@
                         Time    
                     </div>
                     <div class="time-controlls">
-                            <button class="active">
+                            <button class="@(board.Timeframe == 30?"active":string.Empty)" @onclick=@(()=> board.SetTime(30))>
                                 <span>
                                     0:30
                                 </span>
                             </button>
-                            <button>
+                            <button class="@(board.Timeframe == 300?"active":string.Empty)" @onclick=@(()=> board.SetTime(300))>
                                 <span>
                                     5:00
                                 </span>
                             </button>
-                            <button>
+                            <button class="@(board.Timeframe == 0?"active":string.Empty)" @onclick=@(()=> board.SetTime(0))>
                                 <span>
                                    ∞
                                 </span>
@@ -140,6 +140,7 @@
     public void TogglePause()
     {
         pause = !pause;
+        board.GameOver = !board.GameOver;
     }
 
     public void HostGame()

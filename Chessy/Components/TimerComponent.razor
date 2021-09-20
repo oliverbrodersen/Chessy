@@ -1,5 +1,5 @@
 ﻿@using System.Timers
-<div class="timer @(NowPlaying?"now-playing":string.Empty) @(Time < 10 ? "danger":string.Empty)">
+<div class="timer @(NowPlaying?"now-playing":string.Empty) @(Time < 10 && Time > -1? "danger":string.Empty)">
     @(new TimeSpan(0,0,0,Time,0).ToString("m\\:ss"))
 </div>
 

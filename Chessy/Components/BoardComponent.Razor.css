@@ -103,7 +103,6 @@
 }
 .board.game-over img {
     opacity: .5;
-    filter: grayscale(1);
 }
 .promotion-container {
     position: absolute;
