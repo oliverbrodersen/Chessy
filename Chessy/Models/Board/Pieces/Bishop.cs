@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace Chessy.Models.Board.Pieces;
 public class Bishop : Piece
 {

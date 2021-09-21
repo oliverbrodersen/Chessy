@@ -1,4 +1,5 @@
-﻿
+﻿using System.Collections.Generic;
+
 namespace Chessy.Models.Board.Pieces;
 public class Queen : Piece
 {

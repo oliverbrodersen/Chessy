@@ -4,6 +4,7 @@ using Chessy.Models.Board.Pieces;
 using System.Threading;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using System.Threading.Tasks;
 
 namespace Chessy.Components;
 public partial class BoardComponent

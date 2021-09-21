@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics;
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace Chessy.Pages;
 [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
